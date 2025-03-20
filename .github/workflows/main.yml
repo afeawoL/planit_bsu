@@ -47,8 +47,8 @@ jobs:
         python --version
         python main.py
       env:
-        BLACKBOARD_USER: ${{ secrets.BLACKBOARD_USER }}
-        BLACKBOARD_PASSWORD: ${{ secrets.BLACKBOARD_PASSWORD }}
+        GRADESCOPE_USER: ${{ secrets.GRADESCOPE_USER }}
+        GRADESCOPE_PASSWORD: ${{ secrets.GRADESCOPE_PASSWORD }}
     
     - name: Commit new outputs
       run: |
