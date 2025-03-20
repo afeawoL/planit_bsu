@@ -7,7 +7,7 @@ from src.modules import *
 # Compile assignments into a list
 assignments = {}
 modules = [
-    Gradescope()
+    Blackboard()
 ]
 for module in modules:
     module.run(assignments)
