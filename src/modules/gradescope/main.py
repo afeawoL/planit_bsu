@@ -2,12 +2,12 @@ from src.common import utils
 from src.modules.interfaces import Module
 
 
-class Blackboard(Module):
-    ROOT = 'https://bsuonline.blackboard.com'
+class Gradescope(Module):
+    ROOT = 'https://www.gradescope.com'
 
     def _init(self):
         # Extract authentication token from login page
-        login_page_res = self.session.get(Blackboard.ROOT)
+        login_page_res = self.session.get(Gradescope.ROOT)
         login_page = Module.parse_html(login_page_res.text)
         token = None
         for form in login_page.find_all('form'):
@@ -29,7 +29,7 @@ class Blackboard(Module):
                 'session[remember_me_sso]': 0
             }
             login_response = self.session.post(
-                Blackboard.ROOT + '/login',
+                Gradescope.ROOT + '/login',
                 params=login_payload
             )
             history = login_response.history
@@ -37,7 +37,7 @@ class Blackboard(Module):
                 self.initialized = True
 
     def _main(self, assignments: list):
-        dashboard_res = self.session.get(Blackboard.ROOT + '/account')
+        dashboard_res = self.session.get(Gradescope.ROOT + '/account')
         dashboard = Module.parse_html(dashboard_res.text)
 
         # Avoid "Instructor" section
@@ -50,15 +50,15 @@ class Blackboard(Module):
             course_link = course_entry.get('href')
 
             # Retrieve assignment information
-            course_dashboard_res = self.session.get(Blackboard.ROOT + course_link)
+            course_dashboard_res = self.session.get(Gradescope.ROOT + course_link)
             course_dashboard = Module.parse_html(course_dashboard_res.text)
             assignment_table = course_dashboard.find('tbody')
             for row in assignment_table.find_all('tr', {'role': 'row'}):
-                date_string = Blackboard._get_assignment_due_date(row)
+                date_string = Gradescope._get_assignment_due_date(row)
                 if date_string is not None:         # Only add assignment if it has a due date
-                    title = Blackboard._get_assignment_title(row)
-                    status = Blackboard._get_assignment_status(row)
-                    link = Blackboard._get_assignment_link(row, course_link)
+                    title = Gradescope._get_assignment_title(row)
+                    status = Gradescope._get_assignment_status(row)
+                    link = Gradescope._get_assignment_link(row, course_link)
                     submitted = (status != 'No Submission')
 
                     # Add to assignments list
@@ -110,4 +110,4 @@ class Blackboard(Module):
         link = course_link
         if anchor is not None:
             link = anchor.get('href')
-        return Blackboard.ROOT + link
+        return Gradescope.ROOT + link
